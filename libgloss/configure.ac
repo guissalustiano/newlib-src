@@ -101,6 +101,9 @@ case "${target}" in
 	subdirs="$subdirs mips"
 	target_makefile_frag=${srcdir}/config/mips.mt
 	;;
+  rvsc*-*-*)
+	config_riscv=true
+	;;
   riscv*-*-*)
 	config_riscv=true
 	;;
