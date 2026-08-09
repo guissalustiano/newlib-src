@@ -133,6 +133,9 @@ endif
 if HAVE_LIBC_MACHINE_RL78
 include %D%/rl78/Makefile.inc
 endif
+if HAVE_LIBC_MACHINE_RVSC
+include %D%/rvsc/Makefile.inc
+endif
 if HAVE_LIBC_MACHINE_RX
 include %D%/rx/Makefile.inc
 endif

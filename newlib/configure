@@ -669,6 +669,8 @@ HAVE_LIBC_MACHINE_SH_FALSE
 HAVE_LIBC_MACHINE_SH_TRUE
 HAVE_LIBC_MACHINE_RX_FALSE
 HAVE_LIBC_MACHINE_RX_TRUE
+HAVE_LIBC_MACHINE_RVSC_FALSE
+HAVE_LIBC_MACHINE_RVSC_TRUE
 HAVE_LIBC_MACHINE_RL78_FALSE
 HAVE_LIBC_MACHINE_RL78_TRUE
 HAVE_LIBC_MACHINE_RISCV_FALSE
@@ -6051,6 +6053,13 @@ else
   HAVE_LIBC_MACHINE_RL78_TRUE='#'
   HAVE_LIBC_MACHINE_RL78_FALSE=
 fi
+ if test "${machine_dir}" = rvsc; then
+  HAVE_LIBC_MACHINE_RVSC_TRUE=
+  HAVE_LIBC_MACHINE_RVSC_FALSE='#'
+else
+  HAVE_LIBC_MACHINE_RVSC_TRUE='#'
+  HAVE_LIBC_MACHINE_RVSC_FALSE=
+fi
  if test "${machine_dir}" = rx; then
   HAVE_LIBC_MACHINE_RX_TRUE=
   HAVE_LIBC_MACHINE_RX_FALSE='#'
@@ -7913,6 +7922,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${HAVE_LIBC_MACHINE_RL78_TRUE}" && test -z "${HAVE_LIBC_MACHINE_RL78_FALSE}"; then
   as_fn_error $? "conditional \"HAVE_LIBC_MACHINE_RL78\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_LIBC_MACHINE_RVSC_TRUE}" && test -z "${HAVE_LIBC_MACHINE_RVSC_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_LIBC_MACHINE_RVSC\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${HAVE_LIBC_MACHINE_RX_TRUE}" && test -z "${HAVE_LIBC_MACHINE_RX_FALSE}"; then

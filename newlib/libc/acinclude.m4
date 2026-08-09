@@ -54,7 +54,7 @@ m4_foreach_w([MACHINE], [
   nds32 necv70 nios2 nvptx
   or1k
   powerpc pru
-  riscv rl78 rx
+  riscv rl78 rvsc rx
   sh sparc spu
   tic4x tic6x tic80
   v850 visium

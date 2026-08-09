@@ -308,7 +308,11 @@ case "${host_cpu}" in
 	;;
   rvsc*)
 	libm_machine_dir=riscv
-	machine_dir=riscv
+	# Not riscv: that directory's memset/memcpy/memmove/strcmp are
+	# hand-written assembly, which bypasses the machine description and so
+	# ignores the -mno-* flags the rvsc subsets are defined by.  The rvsc
+	# directory keeps only setjmp.S and lets libc/string supply the rest.
+	machine_dir=rvsc
 	newlib_cflags="${newlib_cflags} -DHAVE_NANOSLEEP"
 	default_newlib_atexit_dynamic_alloc="no"
 	have_init_fini=no
