@@ -13,6 +13,10 @@
 #define _INTERNAL_SYSCALL_H
 
 #include <errno.h>
+/* For the O_* values __syscall_open_flags translates, below.  This header is
+   included by every libgloss/riscv syscall stub, most of which do not open
+   files, so it has to bring its own declarations rather than rely on theirs.  */
+#include <fcntl.h>
 
 static inline long
 __syscall_error(long a0)
@@ -76,5 +80,51 @@ _syscall_errno(long n, int argc, long _a0, long _a1, long _a2, long _a3, long _a
 #define syscall_errno(N, ARGC, A0, A1, A2, A3, A4, A5) \
   _syscall_errno(N, ARGC, (long)A0, (long)A1, (long)A2, \
 	         (long)A3, (long)A4, (long)A5)
+
+/* Translate newlib's open flags to the ones the syscall interface expects.
+
+   These syscalls go to a RISC-V Linux ABI implementation -- the proxy kernel,
+   or a simulator's frontend server -- which decodes the flag word with the
+   asm-generic values.  newlib's own O_* are the older BSD ones and do not
+   agree: newlib's O_CREAT is 0x200, which the other side reads as O_TRUNC,
+   and newlib's O_TRUNC is 0x400, read as O_APPEND.  Passing the word through
+   unconverted therefore turns fopen(path, "w") into an open with neither
+   O_CREAT nor O_TRUNC, which fails with ENOENT on any file that does not
+   already exist.  Convert bit by bit rather than passing through, so a flag
+   with no counterpart is dropped instead of silently meaning something else.  */
+
+#define __LINUX_O_CREAT		000000100
+#define __LINUX_O_EXCL		000000200
+#define __LINUX_O_NOCTTY	000000400
+#define __LINUX_O_TRUNC		000001000
+#define __LINUX_O_APPEND	000002000
+#define __LINUX_O_NONBLOCK	000004000
+#define __LINUX_O_SYNC		000010000
+#define __LINUX_O_DIRECTORY	000200000
+#define __LINUX_O_NOFOLLOW	000400000
+#define __LINUX_O_CLOEXEC	002000000
+
+static inline long
+__syscall_open_flags (long flags)
+{
+  /* O_RDONLY/O_WRONLY/O_RDWR are 0/1/2 in both encodings.  */
+  long out = flags & O_ACCMODE;
+
+#define __XLAT_O(NEWLIB, LINUX) \
+  do { if (flags & (NEWLIB)) out |= (LINUX); } while (0)
+  __XLAT_O (O_CREAT,     __LINUX_O_CREAT);
+  __XLAT_O (O_EXCL,      __LINUX_O_EXCL);
+  __XLAT_O (O_NOCTTY,    __LINUX_O_NOCTTY);
+  __XLAT_O (O_TRUNC,     __LINUX_O_TRUNC);
+  __XLAT_O (O_APPEND,    __LINUX_O_APPEND);
+  __XLAT_O (O_NONBLOCK,  __LINUX_O_NONBLOCK);
+  __XLAT_O (O_SYNC,      __LINUX_O_SYNC);
+  __XLAT_O (O_DIRECTORY, __LINUX_O_DIRECTORY);
+  __XLAT_O (O_NOFOLLOW,  __LINUX_O_NOFOLLOW);
+  __XLAT_O (O_CLOEXEC,   __LINUX_O_CLOEXEC);
+#undef __XLAT_O
+
+  return out;
+}
 
 #endif
